@@ -1,0 +1,78 @@
+package com.sample
+ 
+import com.sample.Pacijent;
+
+rule "Prehlada"
+	no-loop
+    when
+       $p : Pacijent( $pr : pregledi )
+        	$p1 : Pregled( $sim : simptomi ) from $pr
+        		$s1 : Simptom( opis == "Curenje iz nosa" ) from $sim
+        		$s2 : Simptom( opis == "Bol u grlu" ) from $sim
+        		$s3 : Simptom( opis == "Glavobolja" ) from $sim
+        		$s4 : Simptom( opis == "Kijanje" ) from $sim
+        		$s5 : Simptom( opis == "Kasalj" ) from $sim
+    then
+    	$p1.getBolest().setNaziv( "Prehlada" );
+    	modify($p){addBolest( "Prehlada" )};
+    	System.out.println( "Prehlada: " +  $p.getIme() + " " + $p.getPrezime() );    	    	
+end
+
+rule "Groznica"
+	no-loop
+    when
+        $p : Pacijent( $pr : pregledi )
+        	$p1 : Pregled( $sim : simptomi ) from $pr
+	        	$s1 : Simptom( opis == "Kijanje" ) from $sim
+		        $s2 : Simptom( opis == "Bol u grlu" ) from $sim
+		        $s3 : Simptom( opis == "Kasalj" ) from $sim
+		        $s4 : Simptom( opis == "Temperatura veca od 38" ) from $sim
+		        $s5 : Simptom( opis == "Curenje iz nosa" ) from $sim
+		        $s6 : Simptom( opis == "Glavobolja" ) from $sim
+		        $s7 : Simptom( opis == "Drhtavica" ) from $sim
+    then
+    	$p1.getBolest().setNaziv( "Groznica" );
+    	modify($p){addBolest( "Groznica" )};
+    	System.out.println( "Groznica: " +  $p.getIme() + " " + $p.getPrezime() );
+end
+
+rule "Upala krajnika"
+	no-loop
+    when
+        $p : Pacijent( $pr : pregledi )
+        	$p1 : Pregled( $sim : simptomi ) from $pr
+		        $s1 : Simptom( opis == "Bol u grlu" ) from $sim
+		        $s2 : Simptom( opis == "Bol koji se siri do usiju" ) from $sim
+		        $s3 : Simptom( opis == "Glavobolja" ) from $sim
+		        $s4 : Simptom( opis == "Temperatura od 40 do 41" ) from $sim
+		        $s5 : Simptom( opis == "Drhtavica" ) from $sim
+		        $s6 : Simptom( opis == "Gubitak apetita" ) from $sim
+		        $s7 : Simptom( opis == "Umor" ) from $sim
+		        $s8 : Simptom( opis == "Zuti sekret iz nosa" ) from $sim
+    then
+    	$p1.getBolest().setNaziv( "Upala krajnika" );
+    	modify($p){addBolest( "Upala krajnika" )};
+    	System.out.println( "Upala krajnika: " +  $p.getIme() + " " + $p.getPrezime() );
+end
+
+rule "Sinusna infekcija"
+	no-loop
+	lock-on-active
+    when
+        $p : Pacijent( $pr : pregledi, $bol : bolesti )
+        	$p1 : Pregled( $d : datum, $sim : simptomi ) from $pr
+		        $s1 : Simptom( opis == "Oticanje oko ociju" ) from $sim
+		        $s2 : Simptom( opis == "Glavobolja" ) from $sim
+		        $s3 : Simptom( opis == "Zuti sekret iz nosa" ) from $sim
+		        $s4 : Simptom( opis == "Bol u grlu" ) from $sim
+		        $s5 : Simptom( opis == "Temperatura veca od 38" ) from $sim
+		        $s6 : Simptom( opis == "Kasalj" ) from $sim
+		      $b : Bolest(  naziv == "Prehlada" || naziv == "Groznica" ) from $bol and
+		      $p2 : Pregled( $p1.oduzimanjeDana($d, 60) == true ) from $pr
+    then
+    	System.out.println( "Datum: " + $d.toString() );
+    	$p1.getBolest().setNaziv( "Sinusna infekcija" );
+    	modify($p){addBolest( "Sinusna infekcija" )};
+    	System.out.println( "Sinusna infekcija: " +  $p.getIme() + " " + $p.getPrezime() );
+    	
+end

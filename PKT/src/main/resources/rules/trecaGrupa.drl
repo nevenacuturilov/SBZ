@@ -1,0 +1,47 @@
+package com.sample
+ 
+import com.sample.Pacijent;
+
+rule "Hronicna bubrezna bolest"
+	no-loop
+    when
+    	$p : Pacijent( $pr : pregledi, $bol : bolesti )
+        	$p1 : Pregled( $d : datum, $sim : simptomi ) from $pr
+		        $s1 : Simptom( opis == "Zamor" ) from $sim
+		        $s2 : Simptom( opis == "Nocturia" ) from $sim
+		        $s3 : Simptom( opis == "Otoci nogu i zglobova" ) from $sim
+		        $s4 : Simptom( opis == "Gusenje" ) from $sim
+		        $s5 : Simptom( opis == "Bol u grudima" ) from $sim
+		     $b1 : Bolest( naziv == "Hipertenzija" ) from $bol and
+		     $p2 : Pregled( $p1.oduzimanjeMeseci($d, 6) == false ) from $pr
+		     $b2 : Bolest( naziv == "Dijabetis" ) from $bol
+		     //$p3 : Pregled( $p3 == $p1 ) from $pr
+    then
+    	System.out.println( "Datum: " + $d.toString() );
+    	$p1.getBolest().setNaziv( "Hronicna bubrezna bolest" );
+    	modify($p){addBolest( "Hronicna bubrezna bolest" )};
+    	System.out.println( "Hronicna bubrezna bolest: " + $p.getIme() + " " + $p.getPrezime() );
+end
+
+rule "Akutna bubrezna povreda"
+	no-loop
+    when
+        $p : Pacijent( $pr : pregledi, $bol : bolesti, zadrzan == true )
+        	$p1 : Pregled( $d : datum, $sim : simptomi ) from $pr
+		        //$s1 : Simptom( opis == "" ) from $sim -- gore je dodat!
+		        $s2 : Simptom( opis == "Zamor" ) from $sim
+		        $s3 : Simptom( opis == "Gusenje" ) from $sim
+		        $s4 : Simptom( opis == "Otoci nogu i zglobova" ) from $sim
+		        $s5 : Simptom( opis == "Dijareja" ) from $sim
+		     $b1 : Bolest( naziv == "Groznica" || naziv == "Upala krajnika" || naziv == "Sinusna infekcija" ) from $bol and
+		     $p2 : Pregled( $p1.oduzimanjeDana($d, 14) == true ) from $pr
+		     //Antibiotici?
+		     $b2 : Bolest() from $bol and
+		     $p3 : Pregled( $p1.oduzimanjeDana($d, 21) == true ) from $pr
+		    
+    then
+    	System.out.println( "Datum: " + $d.toString() );
+    	$p1.getBolest().setNaziv( "Akutna bubrezna bolest" );
+    	modify($p){addBolest( "Akutna bubrezna bolest" )};
+    	System.out.println( "Akutna bubrezna bolest" + $p.getIme() + " " + $p.getPrezime() );
+end

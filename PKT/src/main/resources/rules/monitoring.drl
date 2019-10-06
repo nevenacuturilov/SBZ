@@ -1,0 +1,44 @@
+package com.sample
+ 
+import com.sample.Pacijent;
+
+rule "Problemi sa kiseonikom"
+	no-loop
+    when
+     	$p : Pacijent( kiseonik < 70, m < 15 ) 
+     	$l : Lekar( dezura == true )
+	then
+    	$l.setNotifikacija( "Problemi sa kiseonikom!" );
+    	$l.setPacijent($p.getIme() + " " + $p.getPrezime());
+    	System.out.println( "Problemi sa kiseonikom! -> " +  $p.getIme() + " " + $p.getPrezime());
+    	//modify($p){ setZadrzan(true) };
+    	$p.setZadrzan(true);
+    	System.out.println( "Zadrzan: " +  $p.getIme() + " " + $p.getPrezime() + " " + $p.getZadrzan().toString().toUpperCase());
+end
+
+rule "Ubrzan srcani ritam"
+	no-loop
+    when
+       	$p : Pacijent( srce > 25, s < 10 ) 
+     	$l : Lekar( dezura == true )
+	then
+    	$l.setNotifikacija( "Ubrzan srcani ritam!" );
+    	$l.setPacijent($p.getIme() + " " + $p.getPrezime());
+    	System.out.println( "Ubrzan srcani ritam! -> " +  $p.getIme() + " " + $p.getPrezime());
+    	$p.setZadrzan(true);
+    	System.out.println( "Zadrzan: " +  $p.getIme() + " " + $p.getPrezime() + " " + $p.getZadrzan().toString().toUpperCase());
+end
+
+rule "Hitno potrebna dijaliza"
+	no-loop
+    when
+    	$p : Pacijent( $bol : bolesti, srce > 10, s < 10, mokraca < 100, h < 12 ) 
+    		$b : Bolest( naziv == "Hronicna bubrezna bolest" ) from $bol
+     	$l : Lekar( dezura == true )
+	then
+    	$l.setNotifikacija( "Hitno potrebna dijaliza!" );
+    	$l.setPacijent($p.getIme() + " " + $p.getPrezime());
+    	System.out.println( "Hitno potrebna dijaliza! -> " +  $p.getIme() + " " + $p.getPrezime());
+    	$p.setZadrzan(true);
+    	System.out.println( "Zadrzan: " +  $p.getIme() + " " + $p.getPrezime() + " " + $p.getZadrzan().toString().toUpperCase());
+end

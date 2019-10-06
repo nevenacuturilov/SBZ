@@ -1,0 +1,32 @@
+package com.sample
+ 
+import com.sample.Pacijent;
+
+rule "Hipertenzija"
+	no-loop
+    when
+        $p : Pacijent( $pr : pregledi )
+        	$p1 : Pregled( $d : datum, $sim : simptomi, $p1.oduzimanjeMeseci($d, 6) == true ) from $pr
+        		$s1 : Simptom( opis == "Visok pritisak" ) from $sim 
+    then
+    	System.out.println( "Datum: " + $d.toString() );
+    	$p1.getBolest().setNaziv( "Hipertenzija" );
+    	modify($p){addBolest( "Hipertenzija" )};
+    	System.out.println( "Hipertenzija: " +  $p.getIme() + " " + $p.getPrezime() );
+end
+ 
+rule "Dijabetis"
+	no-loop
+    when
+       	$p : Pacijent( $pr : pregledi )
+        	$p1 : Pregled( $sim : simptomi ) from $pr
+		        $s1 : Simptom( opis == "Cesto uriniranje" ) from $sim
+		        $s2 : Simptom( opis == "Gubitak telesne tezine" ) from $sim
+		        $s3 : Simptom( opis == "Zamor" ) from $sim
+		        $s4 : Simptom( opis == "Mucnina i povracanje" ) from $sim
+	then
+    	$p1.getBolest().setNaziv( "Dijabetis" );
+    	modify($p){addBolest( "Dijabetis" )};
+    	System.out.println( "Dijabetis: " +  $p.getIme() + " " + $p.getPrezime() );
+    	//System.out.println( $p.toString() ); - nisu simptomi povezani -> modify
+end

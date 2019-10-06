@@ -1,0 +1,37 @@
+package com.sample
+ 
+import com.sample.Pacijent;
+
+rule "Spisak pacijenata sa mogucim hronicnim oboljenjima"
+    when
+       	//$p : Pacijent( $pr : pregledi, $bol : bolest)
+       		//ista bolest vise od 5 puta
+		    //$b : Bolest(  naziv != "Prehlada" || naziv != "Groznica" ) from $bol 
+		    //$b : Bolest() from $bol and
+		    //$p1 : Pregled( $p1.oduzimanjeGodia($d, 2) == true ) from $pr
+        	//$p1 : Pregled( $sim : simptomi ) from $pr
+		    //$s1 : Simptom( opis == "" ) from $sim
+	then
+    	//$p1.getBolest().setNaziv( "Dijabetis" );
+    	//System.out.println( "Spisak pacijenata sa mogucim hronicnim oboljenjima" );
+end
+
+rule "Spisak mogucih zavisnika"
+    when
+       	//$p : Pacijent( $pr : pregledi )
+        	//$p1 : Pregled( $sim : simptomi ) from $pr
+		        //$s1 : Simptom( opis == "" ) from $sim
+	then
+    	//$p1.getBolest().setNaziv( "Dijabetis" );
+    	//System.out.println( "Spisak mogucih zavisnika" );
+end
+
+rule "Spisak pacijenata sa oslabljenim imunitetom"
+    when
+       	//$p : Pacijent( $pr : pregledi )
+        	//$p1 : Pregled( $sim : simptomi ) from $pr
+		       //$s1 : Simptom( opis == "" ) from $sim
+	then
+    	//$p1.getBolest().setNaziv( "Dijabetis" );
+    	//System.out.println( "Spisak pacijenata sa oslabljenim imunitetom" );
+end
